@@ -17,4 +17,5 @@ blockchain/artifacts/
 tsconfig.tsbuildinfo
 blockchain/artifacts/
 blockchain/cache/
+cache/
 .DS_Store

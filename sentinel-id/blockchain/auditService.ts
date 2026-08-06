@@ -20,5 +20,5 @@ export async function recordOnChainAudit(input: { trustScore: number; riskLevel:
   const contract = getSecureChainWriteContract();
   const transaction = await contract.recordAudit(input.trustScore, input.riskLevel, input.decision, normalizePreviousHash(input.previousHash));
   const receipt = await transaction.wait(1);
-  return { transactionHash: receipt.hash, blockNumber: receipt.blockNumber, confirmations: receipt.confirmations, network: POLYGON_AMOY_NETWORK, status: receipt.status === 1 ? 'CONFIRMED' : 'FAILED' };
+  return { transactionHash: receipt.hash, blockNumber: receipt.blockNumber, confirmations: await receipt.confirmations(), network: POLYGON_AMOY_NETWORK, status: receipt.status === 1 ? 'CONFIRMED' : 'FAILED' };
 }
