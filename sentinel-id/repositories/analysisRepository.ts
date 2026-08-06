@@ -20,7 +20,9 @@ export async function recordAnalysis(client: SupabaseClient, userId: string, res
     p_ai_recommendation: explanation.recommendedAction, p_ai_source: explanation.source,
   });
   if (error) throw error;
-  return (data as Array<{ trust_score_id: string; analyzed_at: string; ledger_id: string; entry_hash: string; previous_hash: string | null; status: string }>)[0];
+  const record = (data as Array<{ trust_score_id: string; analyzed_at: string; ledger_id: string; entry_hash: string; previous_hash: string | null; status: string }> | null)?.[0];
+  if (!record) throw new Error('Identity analysis was not persisted by the database.');
+  return record;
 }
 
 export async function getLedgerEntries(client: SupabaseClient, userId: string) {

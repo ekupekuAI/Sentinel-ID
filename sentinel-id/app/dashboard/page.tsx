@@ -63,7 +63,7 @@ export default function DashboardPage() {
   };
 
   if (loading) return <div className="min-h-screen bg-background"><Sidebar /><main className="p-4 text-foreground/60 lg:ml-64 lg:p-8">Loading identity data...</main></div>;
-  if (error) return <div className="min-h-screen bg-background"><Sidebar /><main className="p-4 text-red-400 lg:ml-64 lg:p-8" role="alert">{error}</main></div>;
+  if (error) return <div className="min-h-screen bg-background"><Sidebar /><main className="p-4 lg:ml-64 lg:p-8" role="alert"><p className="text-red-400">{error}</p><button type="button" onClick={() => window.location.reload()} className="mt-4 rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-blue-700">Retry</button></main></div>;
   if (!data) return <div className="min-h-screen bg-background"><Sidebar /><main className="p-4 text-foreground/60 lg:ml-64 lg:p-8">No identity assessment is available yet.</main></div>;
   const identity = data.identity;
 
