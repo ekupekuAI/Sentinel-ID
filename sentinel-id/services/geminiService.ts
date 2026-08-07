@@ -30,8 +30,7 @@ export async function explainAnalysis(result: TrustScoreResult, history: { total
     const parsed = JSON.parse(text) as Omit<AIExplanation, 'source'>;
     if (!parsed.explanation || !parsed.summary || !['ALLOW', 'VERIFY', 'BLOCK'].includes(parsed.recommendedAction)) throw new Error('Gemini response was invalid');
     return { ...parsed, source: 'gemini' };
-  } catch (error) {
-    console.warn('Gemini explanation unavailable; using deterministic fallback.', error);
+  } catch {
     return fallback(result);
   }
 }

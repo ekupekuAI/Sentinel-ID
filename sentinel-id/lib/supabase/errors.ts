@@ -8,7 +8,7 @@ export function getSupabaseSetupError(error: unknown, fallback: string) {
   const message = cause?.message ?? '';
   const migrationCodes = new Set(['42P01', '42703', '42883', 'PGRST202']);
 
-  if (migrationCodes.has(cause?.code ?? '') || /record_identity_analysis|relation .* does not exist|column .* does not exist/i.test(message)) {
+  if (migrationCodes.has(cause?.code ?? '') || /record_identity_analysis|digest\(|relation .* does not exist|column .* does not exist/i.test(message)) {
     return 'Database setup is incomplete. Apply every migration in supabase/migrations, then refresh the dashboard.';
   }
 
