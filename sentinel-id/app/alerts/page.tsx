@@ -88,7 +88,7 @@ export default function AlertsPage() {
           <div className="rounded-lg border border-slate-500/30 bg-slate-500/5 p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs text-foreground/60">Total Alerts (24h)</p>
+                <p className="text-xs text-foreground/60">Total Alerts</p>
                 <p className="mt-2 text-3xl font-bold text-blue-400">{alerts.length}</p>
               </div>
               <CheckCircle className="h-8 w-8 text-blue-500" />
@@ -154,7 +154,7 @@ export default function AlertsPage() {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs text-foreground/60">{alert.timestamp}</p>
+                      <p className="text-xs text-foreground/60">{new Date(alert.timestamp).toLocaleString()}</p>
                       <p className="mt-2 text-xs font-mono text-foreground/50">{alert.id}</p>
                     </div>
                   </div>

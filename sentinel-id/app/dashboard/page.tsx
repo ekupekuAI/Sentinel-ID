@@ -129,7 +129,7 @@ export default function DashboardPage() {
             </div>
             <div className="sentinel-surface rounded-lg border border-slate-500/30 bg-slate-500/5 p-4">
               <p className="text-xs text-foreground/60">Timestamp</p>
-              <p className="mt-2 text-sm text-foreground">{data.session?.timestamp ?? 'No session recorded'}</p>
+              <p className="mt-2 text-sm text-foreground">{data.session ? new Date(data.session.timestamp).toLocaleString() : 'No session recorded'}</p>
             </div>
           </div>
         </div>

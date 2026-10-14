@@ -4,6 +4,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Shield, Eye, EyeOff } from 'lucide-react';
 import { signIn } from '@/services/authService';
+import { safeRedirectPath } from '@/lib/safeRedirect';
+
+const supabaseConfigured = Boolean(process.env.NEXT_PUBLIC_SUPABASE_URL && process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY);
 
 export default function LoginPage() {
   const [email, setEmail] = useState('');
@@ -19,7 +22,8 @@ export default function LoginPage() {
     setError(null);
     try {
       await signIn({ email, password });
-      router.push('/dashboard');
+      // Honour the ?next= path set by proxy.ts (same-origin paths only).
+      router.push(safeRedirectPath(new URLSearchParams(window.location.search).get('next')));
       router.refresh();
     } catch (error) {
       setError(error instanceof Error ? error.message : 'Unable to sign in.');
@@ -45,6 +49,12 @@ export default function LoginPage() {
         {/* Login Card */}
         <div className="sentinel-surface rounded-2xl border border-slate-500/20 bg-slate-900/50 p-8 backdrop-blur-sm">
           <h2 className="mb-6 text-xl font-semibold text-white">SOC Portal Login</h2>
+
+          {!supabaseConfigured && (
+            <p role="alert" className="mb-4 rounded-lg border border-amber-500/30 bg-amber-500/10 p-3 text-sm text-amber-300">
+              Supabase is not configured. Set NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY, then restart the app.
+            </p>
+          )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             {/* Email */}
@@ -108,7 +118,7 @@ export default function LoginPage() {
             {/* Submit */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !supabaseConfigured}
               className="mt-6 w-full rounded-lg bg-blue-600 py-2.5 font-medium text-white transition-all hover:bg-blue-700 disabled:opacity-50"
             >
               {loading ? 'Authenticating...' : 'Sign In'}

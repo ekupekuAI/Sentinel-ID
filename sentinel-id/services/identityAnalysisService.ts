@@ -2,8 +2,11 @@ import type { SupabaseClient } from '@supabase/supabase-js';
 import { calculateTrustScore, type SecuritySignals } from '@/lib/trustScore/engine';
 import { getAnalysisContext, recordAnalysis } from '@/repositories/analysisRepository';
 import { explainAnalysis } from '@/services/geminiService';
+import { createAdminClient } from '@/lib/supabase/admin';
 
 export async function analyzeIdentity(client: SupabaseClient, userId: string) {
+  // Fail fast before any work if the server cannot record the result.
+  const admin = createAdminClient();
   const context = await getAnalysisContext(client, userId);
   const metadata = (context.logins[0]?.metadata ?? {}) as Record<string, unknown>;
   const criticalAlerts = context.alerts.filter((alert) => alert.severity === 'CRITICAL').length;
@@ -18,6 +21,6 @@ export async function analyzeIdentity(client: SupabaseClient, userId: string) {
   };
   const result = calculateTrustScore(baseSignals);
   const explanation = await explainAnalysis(result, { total, blocked });
-  const persisted = await recordAnalysis(client, userId, result, explanation);
+  const persisted = await recordAnalysis(admin, userId, result, explanation);
   return { ...result, explanation, analyzedAt: persisted.analyzed_at, ledger: persisted };
 }

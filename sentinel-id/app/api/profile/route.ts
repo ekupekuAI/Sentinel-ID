@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 import { ensureProfile, updateProfile } from '@/repositories/profileRepository';
+import { ZodError } from 'zod';
 import { profileSchema } from '@/lib/validation';
 
 function mapProfile(profile: { full_name: string; email: string; job_title: string | null; department: string | null }) {
@@ -28,7 +29,7 @@ export async function PATCH(request: Request) {
     return NextResponse.json({ data: mapProfile(await updateProfile(supabase, user.id, values)) });
   } catch (error) {
     if (error instanceof SyntaxError) return NextResponse.json({ error: 'Invalid request body.' }, { status: 400 });
-    if (error instanceof Error && 'issues' in error) return NextResponse.json({ error: error.message }, { status: 400 });
+    if (error instanceof ZodError) return NextResponse.json({ error: error.issues[0]?.message ?? 'Invalid profile.' }, { status: 400 });
     console.error('Profile update failed', error);
     return NextResponse.json({ error: 'Unable to update profile.' }, { status: 500 });
   }

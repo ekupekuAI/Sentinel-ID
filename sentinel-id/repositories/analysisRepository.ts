@@ -12,8 +12,10 @@ export async function getAnalysisContext(client: SupabaseClient, userId: string)
   return { device: device.data, logins: logins.data ?? [], alerts: alerts.data ?? [] };
 }
 
-export async function recordAnalysis(client: SupabaseClient, userId: string, result: TrustScoreResult, explanation: AIExplanation) {
-  const { data, error } = await client.rpc('record_identity_analysis', {
+// `admin` must be the service-role client: end users cannot execute this RPC
+// (see migration 20261014000000_harden_analysis_writes.sql).
+export async function recordAnalysis(admin: SupabaseClient, userId: string, result: TrustScoreResult, explanation: AIExplanation) {
+  const { data, error } = await admin.rpc('record_identity_analysis', {
     p_user_id: userId, p_score: result.score, p_risk_level: result.riskLevel, p_decision: result.decision,
     p_confidence: result.confidence, p_factors: result.factors, p_signals: result.signals,
     p_ai_explanation: explanation.explanation, p_ai_summary: explanation.summary,

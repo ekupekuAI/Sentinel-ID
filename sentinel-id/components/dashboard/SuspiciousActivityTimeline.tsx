@@ -36,7 +36,7 @@ export function SuspiciousActivityTimeline({ activities }: { activities: Activit
               <div className="flex-1">
                 <div className="flex items-center justify-between">
                   <p className="font-medium text-foreground">{activity.event}</p>
-                  <span className="text-xs font-medium text-foreground/60">{activity.timestamp}</span>
+                  <span className="text-xs font-medium text-foreground/60">{new Date(activity.timestamp).toLocaleString()}</span>
                 </div>
                 <p className="mt-1 text-sm text-foreground/70">{activity.reason}</p>
               </div>

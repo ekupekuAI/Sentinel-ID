@@ -14,6 +14,7 @@ export default function SettingsPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [savedProfile, setSavedProfile] = useState({ fullName: '', jobTitle: '', department: '' });
 
   useEffect(() => {
     getProfile().then((profile) => {
@@ -21,6 +22,7 @@ export default function SettingsPage() {
       setEmail(profile.email);
       setJobTitle(profile.jobTitle);
       setDepartment(profile.department);
+      setSavedProfile({ fullName: profile.fullName, jobTitle: profile.jobTitle, department: profile.department });
     }).catch((cause) => setError(cause instanceof Error ? cause.message : 'Unable to load profile.')).finally(() => setLoading(false));
   }, []);
 
@@ -28,7 +30,8 @@ export default function SettingsPage() {
     setSaving(true);
     setError(null);
     try {
-      await updateProfile({ fullName, jobTitle, department });
+      const updated = await updateProfile({ fullName, jobTitle, department });
+      setSavedProfile({ fullName: updated.fullName, jobTitle: updated.jobTitle, department: updated.department });
       setSaved(true);
       setTimeout(() => setSaved(false), 3000);
     } catch (cause) {
@@ -36,6 +39,13 @@ export default function SettingsPage() {
     } finally {
       setSaving(false);
     }
+  };
+
+  const handleCancel = () => {
+    setFullName(savedProfile.fullName);
+    setJobTitle(savedProfile.jobTitle);
+    setDepartment(savedProfile.department);
+    setError(null);
   };
 
   return (
@@ -201,7 +211,7 @@ export default function SettingsPage() {
 
             {/* Save Button */}
             <div className="flex justify-end gap-3">
-              <button className="rounded-lg border border-slate-500/30 px-6 py-2 font-medium text-foreground hover:bg-slate-800/50">
+              <button type="button" onClick={handleCancel} disabled={loading || saving} className="rounded-lg border border-slate-500/30 px-6 py-2 font-medium text-foreground hover:bg-slate-800/50 disabled:opacity-50">
                 Cancel
               </button>
               <button

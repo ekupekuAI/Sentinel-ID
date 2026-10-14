@@ -7,10 +7,10 @@ export async function getDashboardData(client: SupabaseClient, userId: string): 
   if (!profile || !score) return null;
   const factors = Array.isArray(score.factors) ? score.factors as DashboardData['risks'] : [];
   const signals = (score.signals && typeof score.signals === 'object' ? score.signals : {}) as Partial<DashboardData['signals']>;
-  const activities = alerts.map((alert) => ({ timestamp: new Date(alert.created_at).toLocaleString(), event: alert.alert_type, result: alert.severity === 'CRITICAL' ? 'BLOCKED' : 'FLAGGED', reason: alert.description }));
+  const activities = alerts.map((alert) => ({ timestamp: new Date(alert.created_at).toISOString(), event: alert.alert_type, result: alert.severity === 'CRITICAL' ? 'BLOCKED' : 'FLAGGED', reason: alert.description }));
   return {
     identity: { id: profile.id, email: profile.email, trustScore: score.score, riskLevel: score.risk_level, decision: score.decision ?? 'VERIFY', confidenceLevel: score.confidence },
-    session: login ? { sessionId: login.session_id, location: login.location ?? 'Unknown', ipAddress: login.ip_address ?? 'Unknown', timestamp: new Date(login.occurred_at).toLocaleString() } : null,
+    session: login ? { sessionId: login.session_id, location: login.location ?? 'Unknown', ipAddress: login.ip_address ?? 'Unknown', timestamp: new Date(login.occurred_at).toISOString() } : null,
     risks: factors,
     mfa: { enabled: device?.mfa_enabled ?? false, primaryMethod: device?.mfa_method ?? 'Not configured', bypassAttemptsLast24h: device?.bypass_attempts_24h ?? 0 },
     device: { known: device?.is_known ?? false, certificateValidation: device?.certificate_validation ?? 'UNKNOWN' },
